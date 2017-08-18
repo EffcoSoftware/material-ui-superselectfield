@@ -1,5 +1,10 @@
+
+/**
+ * Created by Raphaël Morineau on 28 Oct 2016.
+ */
+import 'babel-polyfill'
 import React, { Component } from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 import { findDOMNode } from 'react-dom'
 import InfiniteScroller from 'react-infinite'
 import Popover from 'material-ui/Popover/Popover'
@@ -150,6 +155,7 @@ const SelectionsPresenter = ({
   const baseHRstyle = {
     position: 'absolute',
     bottom: 0,
+    left: 0,
     width: '100%',
     margin: 0,
     boxSizing: 'content-box',
@@ -161,7 +167,7 @@ const SelectionsPresenter = ({
     ...underlineStyle
   }
 
-  const focusedHRstyle = {
+  const focusedHRstyle = disabled ? {} : {
     borderBottom: '2px solid',
     borderColor: (isFocused || isOpen) ? focusColor : borderColor,
     transition: '450ms cubic-bezier(0.23, 1, 0.32, 1)', // transitions.easeOut(),
@@ -463,7 +469,7 @@ class SelectField extends Component {
           key={++index}
           tabIndex={index}
           ref={ref => (this.menuItems[++index] = ref)}
-          onTouchTap={this.handleMenuSelection({ value: childValue, label })}
+          onClick={this.handleMenuSelection({ value: childValue, label })}
           disableFocusRipple
           leftIcon={leftCheckbox}
           rightIcon={rightCheckbox}
@@ -529,7 +535,7 @@ class SelectField extends Component {
         onFocus={this.onFocus}
         onBlur={this.onBlur}
         onKeyDown={this.handleKeyDown}
-        onTouchTap={this.handleClick}
+        onClick={this.handleClick}
         title={!this.state.itemsLength ? 'Nothing to show' : ''}
         style={{
           cursor: disabled ? 'not-allowed' : 'pointer',
@@ -581,18 +587,18 @@ class SelectField extends Component {
           >
             {menuItems.length
               ? <InfiniteScroller
-                  elementHeight={elementHeight}
-                  containerHeight={containerHeight}
-                  styles={{ scrollableStyle }}
-                >
-                  {menuItems}
-                </InfiniteScroller>
+                elementHeight={elementHeight}
+                containerHeight={containerHeight}
+                styles={{ scrollableStyle }}
+              >
+                {menuItems}
+              </InfiniteScroller>
               : <ListItem primaryText={noMatchFound} style={{ cursor: 'default', padding: '10px 16px' }} disabled />
             }
           </div>
           {multiple &&
             <footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-              <div onTouchTap={this.closeMenu} style={menuFooterStyle}>
+              <div onClick={this.closeMenu} style={menuFooterStyle}>
                 {menuCloseButton}
               </div>
             </footer>
@@ -743,6 +749,3 @@ SelectField.defaultProps = {
 }
 
 export default SelectField
-/**
- * Created by Raphaël on 17/02/2017.
- */

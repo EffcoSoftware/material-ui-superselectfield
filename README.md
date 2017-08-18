@@ -24,21 +24,15 @@
 
 
 ## Installation
-`yarn add material-ui-superselectfield`  
+`npm i material-ui-superselectfield`  
 
 This component requires 4 dependencies :
 - react
 - react-dom
-- react-tap-event-plugin
 - material-ui  
 
 ... so make sure they are installed in your project, or install them as well ;)
 
-Also don't forget to update your index.js entry file with :   
-```js
-import injectTapEventPlugin from 'react-tap-event-plugin'
-injectTapEventPlugin()
-```
 
 ## Properties
 | Name             | Type          | Default    | Description |
@@ -116,13 +110,13 @@ Check the `CodeExampleX.js` provided in the repository.
 You can build the project with :   
 ```
 git clone https://github.com/Sharlaan/material-ui-superselectfield.git
-yarn && yarn start
+npm i && npm start
 ```   
 It should open a new page on your default browser @ localhost:3000
 
 
 ## Tests
-`yarn test`
+`npm test`
 
 
 ## Contributing

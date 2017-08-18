@@ -4,15 +4,13 @@
 // https://medium.freecodecamp.com/the-right-way-to-test-react-components-548a4736ab22#.hqprrvawg
 
 /* eslint-env jest */
-import React, { PropTypes } from 'react'
+import React from 'react'
 import { render } from 'react-dom'
 import { shallow, mount } from 'enzyme'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import SuperSelectField from './SuperSelectField'
 
-import injectTapEventPlugin from 'react-tap-event-plugin'
-injectTapEventPlugin()
 
 const muiTheme = getMuiTheme()
 const shallowWithContext = node => shallow(node, {context: {muiTheme}})
