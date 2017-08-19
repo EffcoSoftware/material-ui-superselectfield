@@ -1,6 +1,6 @@
 {
   "name": "material-ui-superselectfield-effco",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "original Material-UI's SelectField component enhanced with autocompletion, multiselection, custom renderers, and infinite loading.",
   "private": false,
   "author": "Raphaël Morineau <raphael.morineau@gmail.com>",
@@ -42,13 +42,20 @@
     "react-dom": "^15.x"
   },
   "babel": {
-    "plugins": ["transform-class-properties", "transform-object-rest-spread"],
+    "plugins": [
+      "transform-class-properties",
+      "transform-object-rest-spread"
+    ],
     "presets": [
       [
         "env",
         {
           "targets": {
-            "browsers": ["> 3%", "ie 11", "safari 8"]
+            "browsers": [
+              "> 3%",
+              "ie 11",
+              "safari 8"
+            ]
           },
           "modules": "commonjs",
           "debug": false
@@ -61,7 +68,10 @@
     "parser": "babel-eslint"
   },
   "eslintConfig": {
-    "extends": ["react-app", "standard"],
+    "extends": [
+      "react-app",
+      "standard"
+    ],
     "parser": "babel-eslint",
     "rules": {
       "camelcase": "off",
