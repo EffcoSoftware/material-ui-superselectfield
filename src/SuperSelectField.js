@@ -1,17 +1,17 @@
 /**
  * Created by Raphaël Morineau on 28 Oct 2016.
  */
-import 'babel-polyfill'
+// import 'babel-polyfill'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { findDOMNode } from 'react-dom'
 import InfiniteScroller from 'react-infinite'
-import Popover from 'material-ui/Popover/Popover'
-import TextField from 'material-ui/TextField/TextField'
-import ListItem from 'material-ui/List/ListItem'
-import CheckedIcon from 'material-ui/svg-icons/navigation/check'
-import UnCheckedIcon from 'material-ui/svg-icons/toggle/check-box-outline-blank'
-import DropDownArrow from 'material-ui/svg-icons/navigation/arrow-drop-down'
+import Popover from 'material-ui-effco/Popover/Popover'
+import TextField from 'material-ui-effco/TextField/TextField'
+import ListItem from 'material-ui-effco/List/ListItem'
+import CheckedIcon from 'material-ui-effco/svg-icons/navigation/check'
+import UnCheckedIcon from 'material-ui-effco/svg-icons/toggle/check-box-outline-blank'
+import DropDownArrow from 'material-ui-effco/svg-icons/navigation/arrow-drop-down'
 
 // ================================================================
 // =========================  Utilities  ==========================
@@ -168,7 +168,6 @@ const SelectionsPresenter = ({
     },
     fontFamily
   } = muiTheme
-  console.log(disabledTextColor, fontFamily)
 
   // Condition for animating floating Label color and underline
   const focusCondition = isFocused || isOpen
@@ -189,7 +188,7 @@ const SelectionsPresenter = ({
     borderLeft: 'none',
     borderRight: 'none',
     borderBottom: disabled ? '2px dotted' : '1px solid',
-    borderColor: disabled ? disabledTextColor : borderColor,
+    borderColor: disabled ? '#ccc' : borderColor,
     ...underlineStyle
   }
 
@@ -217,7 +216,9 @@ const SelectionsPresenter = ({
           >
             {floatingLabel}
           </FloatingLabel>}
-        <div style={{ fontFamily, marginLeft: 0, marginBottom: 7 }}>
+        <div
+          style={{ fontFamily, fontSize: 16, marginLeft: 0, marginBottom: 4 }}
+        >
           {(shrinkCondition || !floatingLabel) &&
             selectionsRenderer(selectedValues, hintText)}
         </div>
@@ -226,11 +227,10 @@ const SelectionsPresenter = ({
         style={{
           marginBottom: 4,
           marginRight: 12,
-          fill: baseHRstyle.borderColor
+          fill: disabled ? disabledTextColor : baseHRstyle.borderColor
         }}
       />
-
-      {/* <hr style={baseHRstyle} /> */}
+      <hr style={baseHRstyle} />
       <hr style={{ ...baseHRstyle, ...focusedHRstyle }} />
     </div>
   )
@@ -648,6 +648,7 @@ class SelectField extends Component {
         style={{
           cursor: disabled ? 'not-allowed' : 'pointer',
           color: disabled ? palette.disabledColor : palette.textColor,
+          marginTop: 3,
           ...style
         }}
       >
