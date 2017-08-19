@@ -1,4 +1,3 @@
-
 /**
  * Created by Raphaël Morineau on 28 Oct 2016.
  */
@@ -21,22 +20,28 @@ import DropDownArrow from 'material-ui/svg-icons/navigation/arrow-drop-down'
 function entries (obj) {
   return 'entries' in Object
     ? Object.entries(obj)
-    : Object.keys(obj).map(prop => [ prop, obj[prop] ])
+    : Object.keys(obj).map(prop => [prop, obj[prop]])
 }
 
 function areEqual (val1, val2) {
   if ((val1 === 0 || val2 === 0) && val1 === val2) return true
   else if (!val1 || !val2 || typeof val1 !== typeof val2) return false
-  else if (typeof val1 === 'string' ||
+  else if (
+    typeof val1 === 'string' ||
     typeof val1 === 'number' ||
-    typeof val1 === 'boolean') return val1 === val2
-  else if (typeof val1 === 'object') {
-    return Object.keys(val1).length === Object.keys(val2).length &&
+    typeof val1 === 'boolean'
+  ) {
+    return val1 === val2
+  } else if (typeof val1 === 'object') {
+    return (
+      Object.keys(val1).length === Object.keys(val2).length &&
       entries(val2).every(([key2, value2]) => val1[key2] === value2)
+    )
   }
 }
 
-const checkFormat = value => value.findIndex(v => typeof v !== 'object' || !('value' in v))
+const checkFormat = value =>
+  value.findIndex(v => typeof v !== 'object' || !('value' in v))
 
 const objectShape = PropTypes.shape({
   value: PropTypes.any.isRequired,
@@ -57,9 +62,12 @@ class FloatingLabel extends Component {
 
   render () {
     const {
-      children, shrink, focusCondition, /* disabled, */
-      defaultColors: {floatingLabelColor, focusColor},
-      floatingLabelStyle, floatingLabelFocusStyle
+      children,
+      shrink,
+      focusCondition /* disabled, */,
+      defaultColors: { floatingLabelColor, focusColor },
+      floatingLabelStyle,
+      floatingLabelFocusStyle
     } = this.props
     const defaultStyles = {
       position: 'static',
@@ -75,21 +83,22 @@ class FloatingLabel extends Component {
       ...floatingLabelStyle
     }
 
-    const focusStyles = focusCondition &&
-      {
-        color: focusColor,
-        ...floatingLabelFocusStyle
-      }
+    const focusStyles = focusCondition && {
+      color: focusColor,
+      ...floatingLabelFocusStyle
+    }
 
-    const shrinkStyles = shrink &&
-      {
-        position: 'absolute',
-        transform: `scale(0.75) translateY(-${this.state.flabelHeight}px)`,
-        pointerEvents: 'none'
-      }
+    const shrinkStyles = shrink && {
+      position: 'absolute',
+      transform: `scale(0.75) translateY(-${this.state.flabelHeight}px)`,
+      pointerEvents: 'none'
+    }
 
     return (
-      <label ref={ref => (this.flabel = ref)} style={{ ...defaultStyles, ...shrinkStyles, ...focusStyles }}>
+      <label
+        ref={ref => (this.flabel = ref)}
+        style={{ ...defaultStyles, ...shrinkStyles, ...focusStyles }}
+      >
         {children}
       </label>
     )
@@ -137,18 +146,35 @@ const styles = {
 }
 
 const SelectionsPresenter = ({
-  selectedValues, selectionsRenderer,
-  floatingLabel, hintText,
-  muiTheme, floatingLabelStyle, floatingLabelFocusStyle,
-  underlineStyle, underlineFocusStyle,
-  isFocused, isOpen, disabled
+  selectedValues,
+  selectionsRenderer,
+  floatingLabel,
+  hintText,
+  muiTheme,
+  floatingLabelStyle,
+  floatingLabelFocusStyle,
+  underlineStyle,
+  underlineFocusStyle,
+  isFocused,
+  isOpen,
+  disabled
 }) => {
-  const { textField: {floatingLabelColor, borderColor, focusColor} } = muiTheme
+  const {
+    textField: {
+      floatingLabelColor,
+      borderColor,
+      focusColor,
+      disabledTextColor
+    },
+    fontFamily
+  } = muiTheme
+  console.log(disabledTextColor, fontFamily)
 
   // Condition for animating floating Label color and underline
   const focusCondition = isFocused || isOpen
   // Condition for shrinking the floating Label
-  const shrinkCondition = (Array.isArray(selectedValues) && !!selectedValues.length) ||
+  const shrinkCondition =
+    (Array.isArray(selectedValues) && !!selectedValues.length) ||
     (!Array.isArray(selectedValues) && typeof selectedValues === 'object') ||
     focusCondition
 
@@ -162,18 +188,20 @@ const SelectionsPresenter = ({
     borderTop: 'none',
     borderLeft: 'none',
     borderRight: 'none',
-    borderBottom: '1px solid',
-    borderColor,
+    borderBottom: disabled ? '2px dotted' : '1px solid',
+    borderColor: disabled ? disabledTextColor : borderColor,
     ...underlineStyle
   }
 
-  const focusedHRstyle = disabled ? {} : {
-    borderBottom: '2px solid',
-    borderColor: (isFocused || isOpen) ? focusColor : borderColor,
-    transition: '450ms cubic-bezier(0.23, 1, 0.32, 1)', // transitions.easeOut(),
-    transform: `scaleX( ${(isFocused || isOpen) ? 1 : 0} )`,
-    ...underlineFocusStyle
-  }
+  const focusedHRstyle = disabled
+    ? {}
+    : {
+      borderBottom: '2px solid',
+      borderColor: isFocused || isOpen ? focusColor : borderColor,
+      transition: '450ms cubic-bezier(0.23, 1, 0.32, 1)', // transitions.easeOut(),
+      transform: `scaleX( ${isFocused || isOpen ? 1 : 0} )`,
+      ...underlineFocusStyle
+    }
 
   return (
     <div style={styles.div1}>
@@ -183,29 +211,33 @@ const SelectionsPresenter = ({
             shrink={shrinkCondition}
             focusCondition={focusCondition}
             disabled={disabled}
-            defaultColors={{floatingLabelColor, focusColor}}
+            defaultColors={{ floatingLabelColor, focusColor }}
             floatingLabelStyle={floatingLabelStyle}
             floatingLabelFocusStyle={floatingLabelFocusStyle}
           >
             {floatingLabel}
-          </FloatingLabel>
-        }
-        {(shrinkCondition || !floatingLabel) &&
-          selectionsRenderer(selectedValues, hintText)
-        }
+          </FloatingLabel>}
+        <div style={{ fontFamily, marginLeft: 0, marginBottom: 7 }}>
+          {(shrinkCondition || !floatingLabel) &&
+            selectionsRenderer(selectedValues, hintText)}
+        </div>
       </div>
-      <DropDownArrow style={{fill: borderColor}} />
+      <DropDownArrow
+        style={{
+          marginBottom: 4,
+          marginRight: 12,
+          fill: baseHRstyle.borderColor
+        }}
+      />
 
-      <hr style={baseHRstyle} />
+      {/* <hr style={baseHRstyle} /> */}
       <hr style={{ ...baseHRstyle, ...focusedHRstyle }} />
-    </div>)
+    </div>
+  )
 }
 
 SelectionsPresenter.propTypes = {
-  value: PropTypes.oneOfType([
-    objectShape,
-    PropTypes.arrayOf(objectShape)
-  ]),
+  value: PropTypes.oneOfType([objectShape, PropTypes.arrayOf(objectShape)]),
   selectionsRenderer: PropTypes.func,
   hintText: PropTypes.string
 }
@@ -220,8 +252,7 @@ SelectionsPresenter.defaultProps = {
       return values.length
         ? values.map(({ value, label }) => label || value).join(', ')
         : hintText
-    }
-    else if (label || value) return label || value
+    } else if (label || value) return label || value
     else return hintText
   }
 }
@@ -239,7 +270,7 @@ class SelectField extends Component {
       isOpen: false,
       isFocused: false,
       itemsLength,
-      showAutocomplete: (itemsLength > showAutocompleteThreshold) || false,
+      showAutocomplete: itemsLength > showAutocompleteThreshold || false,
       selectedItems: value || (multiple ? [] : null),
       searchText: ''
     }
@@ -264,45 +295,56 @@ class SelectField extends Component {
   getChildrenLength (children) {
     if (!children) return 0
     else if (Array.isArray(children) && children.length) {
-      return children.reduce((count, { type, props: {value, children: cpc} }) => {
-        if (type === 'optgroup') {
-          if (cpc) {
-            if (Array.isArray(cpc)) {
-              for (let c of cpc) {
-                if (c.props.value) ++count
-              }
-            } else if (typeof cpc === 'object' && cpc.props.value) ++count
-          }
-        } else if (value) ++count
-        return count
-      }, 0)
+      return children.reduce(
+        (count, { type, props: { value, children: cpc } }) => {
+          if (type === 'optgroup') {
+            if (cpc) {
+              if (Array.isArray(cpc)) {
+                for (let c of cpc) {
+                  if (c.props.value) ++count
+                }
+              } else if (typeof cpc === 'object' && cpc.props.value) ++count
+            }
+          } else if (value) ++count
+          return count
+        },
+        0
+      )
     } else if (!Array.isArray(children) && typeof children === 'object') {
-      if (children.type === 'optgroup') return this.getChildrenLength(children.props.children)
-      else if (children.props.value) return 1
+      if (children.type === 'optgroup') {
+        return this.getChildrenLength(children.props.children)
+      } else if (children.props.value) return 1
     }
     return 0
   }
 
   onFocus = () => this.setState({ isFocused: true })
 
-  onBlur = (event) => {
+  onBlur = event => {
     if (!this.state.isOpen) this.setState({ isFocused: false })
   }
 
-  closeMenu = (reason) => {
+  closeMenu = reason => {
     const { onChange, name } = this.props
     onChange(this.state.selectedItems, name)
     if (reason) this.setState({ isFocused: false }) // if reason === 'clickaway' or 'offscreen'
-    this.setState({ isOpen: false, searchText: '' }, () => !reason && this.root.focus())
+    this.setState(
+      { isOpen: false, searchText: '' },
+      () => !reason && this.root.focus()
+    )
   }
 
   openMenu () {
-    if (this.state.itemsLength) this.setState({ isOpen: true }, () => this.focusTextField())
+    if (this.state.itemsLength) {
+      this.setState({ isOpen: true }, () => this.focusTextField())
+    }
   }
 
   focusTextField () {
     if (this.state.showAutocomplete) {
-      const input = findDOMNode(this.searchTextField).getElementsByTagName('input')[0]
+      const input = findDOMNode(this.searchTextField).getElementsByTagName(
+        'input'
+      )[0]
       input.focus()
     } else this.focusMenuItem()
   }
@@ -324,9 +366,9 @@ class SelectField extends Component {
    * Main Component Wrapper methods
    */
   // toggle instead of close ? (in case user changes  targetOrigin/anchorOrigin)
-  handleClick = (event) => !this.props.disabled && this.openMenu()
+  handleClick = event => !this.props.disabled && this.openMenu()
 
-  handleKeyDown = (event) =>
+  handleKeyDown = event =>
     !this.props.disabled && /ArrowDown|Enter/.test(event.key) && this.openMenu()
 
   /**
@@ -348,25 +390,30 @@ class SelectField extends Component {
         this.closeMenu()
         break
 
-      default: break
+      default:
+        break
     }
   }
 
   /**
    * Menu methods
    */
-  handleMenuSelection = (selectedItem) => (event) => {
+  handleMenuSelection = selectedItem => event => {
     event.preventDefault()
     const { selectedItems } = this.state
     if (this.props.multiple) {
-      const selectedItemExists = selectedItems.some(obj => areEqual(obj.value, selectedItem.value))
+      const selectedItemExists = selectedItems.some(obj =>
+        areEqual(obj.value, selectedItem.value)
+      )
       const updatedValues = selectedItemExists
         ? selectedItems.filter(obj => !areEqual(obj.value, selectedItem.value))
         : selectedItems.concat(selectedItem)
       this.setState({ selectedItems: updatedValues })
       this.clearTextField(() => this.focusTextField())
     } else {
-      const updatedValue = areEqual(selectedItems, selectedItem) ? null : selectedItem
+      const updatedValue = areEqual(selectedItems, selectedItem)
+        ? null
+        : selectedItem
       this.setState({ selectedItems: updatedValue }, () => this.closeMenu())
     }
   }
@@ -375,23 +422,24 @@ class SelectField extends Component {
   /**
    * this.menuItems can contain uncontinuous React elements, because of filtering
    */
-  handleMenuKeyDown = ({ key, target: {tabIndex} }) => {
+  handleMenuKeyDown = ({ key, target: { tabIndex } }) => {
     const cleanMenuItems = this.menuItems.filter(item => !!item)
     const firstTabIndex = cleanMenuItems[0].props.tabIndex
-    const lastTabIndex = cleanMenuItems[ cleanMenuItems.length - 1 ].props.tabIndex
-    const currentElementIndex = cleanMenuItems.findIndex(item => item.props.tabIndex === tabIndex)
+    const lastTabIndex =
+      cleanMenuItems[cleanMenuItems.length - 1].props.tabIndex
+    const currentElementIndex = cleanMenuItems.findIndex(
+      item => item.props.tabIndex === tabIndex
+    )
     switch (key) {
       case 'ArrowUp':
         if (+tabIndex === firstTabIndex) {
           this.state.showAutocomplete
             ? this.focusTextField()
             : this.focusMenuItem(lastTabIndex)
-        }
-        else {
+        } else {
           const previousTabIndex = cleanMenuItems
             .slice(0, currentElementIndex)
-            .slice(-1)[0]
-            .props.tabIndex
+            .slice(-1)[0].props.tabIndex
           this.focusMenuItem(previousTabIndex)
         }
         break
@@ -401,10 +449,8 @@ class SelectField extends Component {
           this.state.showAutocomplete
             ? this.focusTextField()
             : this.focusMenuItem()
-        }
-        else {
-          const nextTabIndex = cleanMenuItems
-            .slice(currentElementIndex + 1)[0]
+        } else {
+          const nextTabIndex = cleanMenuItems.slice(currentElementIndex + 1)[0]
             .props.tabIndex
           this.focusMenuItem(nextTabIndex)
         }
@@ -422,26 +468,54 @@ class SelectField extends Component {
         this.closeMenu()
         break
 
-      default: break
+      default:
+        break
     }
   }
 
   render () {
-    const { children, floatingLabel, hintText, hintTextAutocomplete, noMatchFound, multiple, disabled, nb2show,
-      autocompleteFilter, selectionsRenderer, menuCloseButton, anchorOrigin,
-      style, menuStyle, elementHeight, innerDivStyle, selectedMenuItemStyle, menuGroupStyle, menuFooterStyle,
-      floatingLabelStyle, floatingLabelFocusStyle, underlineStyle, underlineFocusStyle,
-      autocompleteUnderlineStyle, autocompleteUnderlineFocusStyle,
-      checkedIcon, unCheckedIcon, hoverColor, checkPosition
+    const {
+      children,
+      floatingLabel,
+      hintText,
+      hintTextAutocomplete,
+      noMatchFound,
+      multiple,
+      disabled,
+      nb2show,
+      autocompleteFilter,
+      selectionsRenderer,
+      menuCloseButton,
+      anchorOrigin,
+      style,
+      menuStyle,
+      elementHeight,
+      innerDivStyle,
+      selectedMenuItemStyle,
+      menuGroupStyle,
+      menuFooterStyle,
+      floatingLabelStyle,
+      floatingLabelFocusStyle,
+      underlineStyle,
+      underlineFocusStyle,
+      autocompleteUnderlineStyle,
+      autocompleteUnderlineFocusStyle,
+      checkedIcon,
+      unCheckedIcon,
+      hoverColor,
+      checkPosition
     } = this.props
 
     // Default style depending on Material-UI context (muiTheme)
-    const { baseTheme: {palette}, menuItem } = this.context.muiTheme
+    const { baseTheme: { palette }, menuItem } = this.context.muiTheme
 
     const mergedSelectedMenuItemStyle = {
-      color: menuItem.selectedTextColor, ...selectedMenuItemStyle
+      color: menuItem.selectedTextColor,
+      ...selectedMenuItemStyle
     }
-    if (checkedIcon) checkedIcon.props.style.fill = mergedSelectedMenuItemStyle.color
+    if (checkedIcon) {
+      checkedIcon.props.style.fill = mergedSelectedMenuItemStyle.color
+    }
     const mergedHoverColor = hoverColor || menuItem.hoverColor
 
     /**
@@ -454,17 +528,28 @@ class SelectField extends Component {
     const menuItemBuilder = (nodes, child, index) => {
       const { selectedItems } = this.state
       const { value: childValue, label } = child.props
-      if (!autocompleteFilter(this.state.searchText, label || childValue)) return nodes
+      if (!autocompleteFilter(this.state.searchText, label || childValue)) {
+        return nodes
+      }
       const isSelected = Array.isArray(selectedItems)
         ? selectedItems.some(obj => areEqual(obj.value, childValue))
         : selectedItems ? selectedItems.value === childValue : false
-      const leftCheckbox = (multiple && checkPosition === 'left' && (isSelected ? checkedIcon : unCheckedIcon)) || null
-      const rightCheckbox = (multiple && checkPosition === 'right' && (isSelected ? checkedIcon : unCheckedIcon)) || null
+      const leftCheckbox =
+        (multiple &&
+          checkPosition === 'left' &&
+          (isSelected ? checkedIcon : unCheckedIcon)) ||
+        null
+      const rightCheckbox =
+        (multiple &&
+          checkPosition === 'right' &&
+          (isSelected ? checkedIcon : unCheckedIcon)) ||
+        null
       if (multiple && checkPosition !== '') {
         if (checkedIcon) checkedIcon.props.style.marginTop = 0
         if (unCheckedIcon) unCheckedIcon.props.style.marginTop = 0
       }
-      return [ ...nodes, (
+      return [
+        ...nodes,
         <ListItem
           key={++index}
           tabIndex={index}
@@ -478,37 +563,54 @@ class SelectField extends Component {
           innerDivStyle={{
             paddingTop: 10,
             paddingBottom: 10,
-            paddingLeft: (multiple && checkPosition === 'left') ? 56 : 16,
-            paddingRight: (multiple && checkPosition === 'right') ? 56 : 16,
+            paddingLeft: multiple && checkPosition === 'left' ? 56 : 16,
+            paddingRight: multiple && checkPosition === 'right' ? 56 : 16,
             ...innerDivStyle
           }}
           style={isSelected ? mergedSelectedMenuItemStyle : {}}
-        />)]
+        />
+      ]
     }
 
     const fixedChildren = Array.isArray(children) ? children : [children]
 
-    const menuItems = !disabled && fixedChildren.length && this.state.isOpen &&
+    const menuItems =
+      !disabled &&
+      fixedChildren.length &&
+      this.state.isOpen &&
       fixedChildren.reduce((nodes, child, index) => {
-        if (child.type !== 'optgroup') return menuItemBuilder(nodes, child, index)
+        if (child.type !== 'optgroup') {
+          return menuItemBuilder(nodes, child, index)
+        }
         const nextIndex = nodes.length ? +nodes[nodes.length - 1].key + 1 : 0
-        const menuGroup =
+        const menuGroup = (
           <ListItem
             disabled
             key={nextIndex}
             primaryText={child.props.label}
-            style={{ cursor: 'default', paddingTop: 10, paddingBottom: 10, ...menuGroupStyle }}
+            style={{
+              cursor: 'default',
+              paddingTop: 10,
+              paddingBottom: 10,
+              ...menuGroupStyle
+            }}
           />
+        )
         let groupedItems = []
         const cpc = child.props.children
         if (cpc) {
           if (Array.isArray(cpc) && cpc.length) {
-            groupedItems = cpc.reduce((nodes, child, idx) =>
-              menuItemBuilder(nodes, child, nextIndex + idx), [])
-          } else if (typeof cpc === 'object') groupedItems = menuItemBuilder(nodes, cpc, nextIndex)
+            groupedItems = cpc.reduce(
+              (nodes, child, idx) =>
+                menuItemBuilder(nodes, child, nextIndex + idx),
+              []
+            )
+          } else if (typeof cpc === 'object') {
+            groupedItems = menuItemBuilder(nodes, cpc, nextIndex)
+          }
         }
         return groupedItems.length
-          ? [ ...nodes, menuGroup, ...groupedItems ]
+          ? [...nodes, menuGroup, ...groupedItems]
           : nodes
       }, [])
 
@@ -520,18 +622,24 @@ class SelectField extends Component {
     const autoCompleteHeight = this.state.showAutocomplete ? 53 : 0
     const footerHeight = menuCloseButton ? 36 : 0
     const noMatchFoundHeight = 36
-    const containerHeight = (Array.isArray(elementHeight)
-      ? elementHeight.reduce((totalHeight, height) => totalHeight + height, 6)
-      : elementHeight * (nb2show < menuItems.length ? nb2show : menuItems.length)
-    ) || 0
-    const popoverHeight = autoCompleteHeight + (containerHeight || noMatchFoundHeight) + footerHeight
-    const scrollableStyle = { overflowY: nb2show >= menuItems.length ? 'hidden' : 'scroll' }
+    const containerHeight =
+      (Array.isArray(elementHeight)
+        ? elementHeight.reduce((totalHeight, height) => totalHeight + height, 6)
+        : elementHeight *
+          (nb2show < menuItems.length ? nb2show : menuItems.length)) || 0
+    const popoverHeight =
+      autoCompleteHeight +
+      (containerHeight || noMatchFoundHeight) +
+      footerHeight
+    const scrollableStyle = {
+      overflowY: nb2show >= menuItems.length ? 'hidden' : 'scroll'
+    }
     const menuWidth = this.root ? this.root.clientWidth : null
 
     return (
       <div
         ref={ref => (this.root = ref)}
-        tabIndex='0'
+        tabIndex="0"
         onFocus={this.onFocus}
         onBlur={this.onBlur}
         onKeyDown={this.handleKeyDown}
@@ -543,7 +651,6 @@ class SelectField extends Component {
           ...style
         }}
       >
-
         <SelectionsPresenter
           isFocused={this.state.isFocused}
           isOpen={this.state.isOpen}
@@ -575,11 +682,14 @@ class SelectField extends Component {
               hintText={hintTextAutocomplete}
               onChange={this.handleTextFieldAutocompletionFiltering}
               onKeyDown={this.handleTextFieldKeyDown}
-              style={{ marginLeft: 16, marginBottom: 5, width: menuWidth - (16 * 2) }}
+              style={{
+                marginLeft: 16,
+                marginBottom: 5,
+                width: menuWidth - 16 * 2
+              }}
               underlineStyle={autocompleteUnderlineStyle}
               underlineFocusStyle={autocompleteUnderlineFocusStyle}
-            />
-          }
+            />}
           <div
             ref={ref => (this.menu = ref)}
             onKeyDown={this.handleMenuKeyDown}
@@ -593,18 +703,25 @@ class SelectField extends Component {
               >
                 {menuItems}
               </InfiniteScroller>
-              : <ListItem primaryText={noMatchFound} style={{ cursor: 'default', padding: '10px 16px' }} disabled />
-            }
+              : <ListItem
+                primaryText={noMatchFound}
+                style={{ cursor: 'default', padding: '10px 16px' }}
+                disabled
+              />}
           </div>
           {multiple &&
-            <footer style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            <footer
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end'
+              }}
+            >
               <div onClick={this.closeMenu} style={menuFooterStyle}>
                 {menuCloseButton}
               </div>
-            </footer>
-          }
+            </footer>}
         </Popover>
-
       </div>
     )
   }
@@ -622,7 +739,7 @@ SelectField.propTypes = {
   style: PropTypes.object,
   menuStyle: PropTypes.object,
   menuGroupStyle: PropTypes.object,
-  checkPosition: PropTypes.oneOf([ '', 'left', 'right' ]),
+  checkPosition: PropTypes.oneOf(['', 'left', 'right']),
   checkedIcon: PropTypes.node,
   unCheckedIcon: PropTypes.node,
   hoverColor: PropTypes.string,
@@ -640,43 +757,44 @@ SelectField.propTypes = {
             if (!child.props.value) {
               return new Error(`
               Missing required property 'value' for '${propFullName}' supplied to '${componentName} ${props.name}'.
-              Validation failed.`
-              )
+              Validation failed.`)
             }
           }
-        } else if (typeof pp.props.children === 'object' && !pp.props.children.props.value) {
+        } else if (
+          typeof pp.props.children === 'object' &&
+          !pp.props.children.props.value
+        ) {
           return new Error(`
           Missing required property 'value' for '${propFullName}' supplied to '${componentName} ${props.name}'.
-          Validation failed.`
-          )
+          Validation failed.`)
         }
       }
     },
-    PropTypes.arrayOf((props, propName, componentName, location, propFullName) => {
-      if (props[propName].type !== 'optgroup') {
-        if (!props[propName].props.value) {
-          return new Error(`
-          Missing required property 'value' for '${propFullName}' supplied to '${componentName} ${props.name}'.
-          Validation failed.`
-          )
-        }
-      } else {
-        for (let child of props[propName].props.children) {
-          if (!child.props.value) {
+    PropTypes.arrayOf(
+      (props, propName, componentName, location, propFullName) => {
+        if (props[propName].type !== 'optgroup') {
+          if (!props[propName].props.value) {
             return new Error(`
+          Missing required property 'value' for '${propFullName}' supplied to '${componentName} ${props.name}'.
+          Validation failed.`)
+          }
+        } else {
+          for (let child of props[propName].props.children) {
+            if (!child.props.value) {
+              return new Error(`
             Missing required property 'value' for '${propFullName}' supplied to '${componentName} ${props.name}'.
-            Validation failed.`
-            )
+            Validation failed.`)
+            }
           }
         }
       }
-    })
+    )
   ]),
   innerDivStyle: PropTypes.object,
   selectedMenuItemStyle: PropTypes.object,
   menuFooterStyle: PropTypes.object,
   name: PropTypes.string,
-  floatingLabel: PropTypes.oneOfType([ PropTypes.string, PropTypes.node ]),
+  floatingLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   floatingLabelFocusStyle: PropTypes.object,
   underlineStyle: PropTypes.object,
   underlineFocusStyle: PropTypes.object,
@@ -698,20 +816,20 @@ SelectField.propTypes = {
       if (!Array.isArray(value)) {
         return new Error(`
           When using 'multiple' mode, 'value' of '${componentName} ${props.name}' must be an array.
-          Validation failed.`
-        )
+          Validation failed.`)
       } else if (checkFormat(value) !== -1) {
         const index = checkFormat(value)
         return new Error(`
           'value[${index}]' of '${componentName} ${props.name}' must be an object including a 'value' property.
-          Validation failed.`
-        )
+          Validation failed.`)
       }
-    } else if (value !== null && (typeof value !== 'object' || !('value' in value))) {
+    } else if (
+      value !== null &&
+      (typeof value !== 'object' || !('value' in value))
+    ) {
       return new Error(`
         'value' of '${componentName} ${props.name}' must be an object including a 'value' property.
-        Validation failed.`
-      )
+        Validation failed.`)
     }
   },
   autocompleteFilter: PropTypes.func,
@@ -738,8 +856,12 @@ SelectField.defaultProps = {
   showAutocompleteThreshold: 10,
   elementHeight: 36,
   autocompleteFilter: (searchText, text) => {
-    if (!text || (typeof text !== 'string' && typeof text !== 'number')) return false
-    if (typeof searchText !== 'string' && typeof searchText !== 'number') return false
+    if (!text || (typeof text !== 'string' && typeof text !== 'number')) {
+      return false
+    }
+    if (typeof searchText !== 'string' && typeof searchText !== 'number') {
+      return false
+    }
     return (text + '').toLowerCase().includes(searchText.toLowerCase())
   },
   value: null,
